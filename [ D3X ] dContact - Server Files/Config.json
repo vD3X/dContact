@@ -1,0 +1,16 @@
+{
+  "Settings": {
+    "Contact_Command": "contact, kontakt",
+    "Title": "[ ★ CS-Zjarani | Kontakty ★ ]",
+    "TitleColor": "#29cc94"
+  },
+  "AdminContacts": [
+    {
+      "name": "D3X",
+      "rank": "Właściciel Serwera",
+      "steam": "https://steamcommunity.com/id/dd3xx",
+      "forum": "https://cs-zjarani.pl",
+      "discord": "dd3xx"
+    }
+  ]
+}
