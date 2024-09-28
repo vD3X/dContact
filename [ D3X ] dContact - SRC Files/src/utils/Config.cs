@@ -14,7 +14,7 @@ namespace dContact
         {
             if (!File.Exists(configPath))
             {
-                Instance.Logger.LogInformation("Plik konfiguracyjny nie istnieje. Tworzenie nowego pliku z domyślną konfiguracją.");
+                Instance.Logger.LogInformation("Configuration file does not exist. Creating a new file with default settings.");
                 CreateDefaultConfig();
             }
 
@@ -31,11 +31,14 @@ namespace dContact
                 {
                     new ContactData
                     {
-                        name = "D3X",
-                        rank = "Właściciel Serwera",
-                        steam = "https://steamcommunity.com/id/dd3xx",
-                        forum = "https://cs-zjarani.pl",
-                        discord = "dd3xx"
+                        Name = "D3X",
+                        Rank = "Właściciel Serwera",
+                        Contacts = new Dictionary<string, string>
+                        {
+                            { "Steam", "https://steamcommunity.com/id/dd3xx" },
+                            { "Forum", "https://cs-zjarani.pl" },
+                            { "Discord", "dd3xx" }
+                        }
                     },
                 }
             };
@@ -52,16 +55,15 @@ namespace dContact
 
                 if (loadedConfig == null || loadedConfig.AdminContacts == null || !loadedConfig.AdminContacts.Any())
                 {
-                    Instance.Logger.LogError("Plik konfiguracyjny jest pusty lub ma błędną strukturę.");
+                    Instance.Logger.LogError("The configuration file is empty or has an incorrect structure.");
                     return null;
                 }
 
-                Instance.Logger.LogInformation("Konfiguracja została załadowana poprawnie.");
                 return loadedConfig;
             }
             catch (Exception ex)
             {
-                Instance.Logger.LogError($"Błąd podczas wczytywania pliku konfiguracyjnego: {ex.Message}");
+                Instance.Logger.LogError($"Error loading the configuration file: {ex.Message}");
                 return null;
             }
         }
@@ -72,11 +74,10 @@ namespace dContact
             {
                 string json = JsonConvert.SerializeObject(config, Formatting.Indented);
                 File.WriteAllText(configPath, json);
-                Instance.Logger.LogInformation("Plik konfiguracyjny został zapisany.");
             }
             catch (Exception ex)
             {
-                Instance.Logger.LogError($"Błąd podczas zapisywania pliku konfiguracyjnego: {ex.Message}");
+                Instance.Logger.LogError($"Error saving the configuration file: {ex.Message}");
             }
         }
 
@@ -94,7 +95,6 @@ namespace dContact
                 if (newConfig != null)
                 {
                     config = newConfig;
-                    Instance.Logger.LogInformation("Konfiguracja została zaktualizowana po zmianie pliku.");
                     adminsList = config.AdminContacts;
                 }
             };
@@ -110,18 +110,16 @@ namespace dContact
 
         public class Settings
         {
-            public string Contact_Command { get; set; } = "contact, kontakt";
-            public string Title { get; set; } = "[ ★ CS-Zjarani | Kontakty ★ ]";
-            public string TitleColor { get; set; } = "#29cc94";
+            public string Contact_Commands { get; set; } = "contact, kontakt";
+            public string Menu_Title { get; set; } = "[ ★ CS-Zjarani | Kontakty ★ ]";
+            public string Menu_Title_Color { get; set; } = "#29cc94";
         }
 
         public class ContactData
         {
-            public string name { get; set; }
-            public string rank { get; set; }
-            public string steam { get; set; }
-            public string forum { get; set; }
-            public string discord { get; set; }
+            public string Name { get; set; }
+            public string Rank { get; set; }
+            public Dictionary<string, string> Contacts { get; set; } = new Dictionary<string, string>();
         }
     }
 }

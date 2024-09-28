@@ -1,16 +1,18 @@
 {
   "Settings": {
-    "Contact_Command": "contact, kontakt",
-    "Title": "[ ★ CS-Zjarani | Kontakty ★ ]",
-    "TitleColor": "#29cc94"
+    "Contact_Commands": "contact, kontakt",
+    "Menu_Title": "[ ★ CS-Zjarani | Kontakty ★ ]",
+    "Menu_Title_Color": "#29cc94"
   },
   "AdminContacts": [
     {
-      "name": "D3X",
-      "rank": "Właściciel Serwera",
-      "steam": "https://steamcommunity.com/id/dd3xx",
-      "forum": "https://cs-zjarani.pl",
-      "discord": "dd3xx"
+      "Name": "D3X",
+      "Rank": "Właściciel Serwera",
+      "Contacts": {
+        "Steam": "https://steamcommunity.com/id/dd3xx",
+        "Forum": "https://cs-zjarani.pl",
+        "Discord": "dd3xx"
+      }
     }
   ]
 }

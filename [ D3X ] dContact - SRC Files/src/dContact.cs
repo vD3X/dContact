@@ -1,11 +1,7 @@
-using CounterStrikeSharp.API; 
 using CounterStrikeSharp.API.Core; 
-using CounterStrikeSharp.API.Core.Attributes.Registration; 
 using MenuManager;
 using CounterStrikeSharp.API.Modules.Commands;
-using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API.Modules.Utils;
-using Newtonsoft.Json;
 using CounterStrikeSharp.API.Core.Capabilities;
 using Microsoft.Extensions.Logging;
 
@@ -16,7 +12,7 @@ public class dContact : BasePlugin
     public override string ModuleName => "[CS2] D3X - [ Kontakt z administracją ]";
     public override string ModuleAuthor => "D3X";
     public override string ModuleDescription => " Plugin dodaje na kontakt do administracji.";
-    public override string ModuleVersion => "1.0.0";
+    public override string ModuleVersion => "1.0.1";
     public static dContact Instance { get; private set; }
     public static List<Config.ContactData> adminsList;
     private IMenuApi? _api;
@@ -29,7 +25,7 @@ public class dContact : BasePlugin
 
         if (Config.config.AdminContacts == null || !Config.config.AdminContacts.Any())
         {
-            Logger.LogError("W Pliku konfiguracyjnym nie znaleziono żadnych administratorów.");
+            Logger.LogError("No admins found in the config.");
             return;
         }
 
@@ -37,7 +33,7 @@ public class dContact : BasePlugin
 
         var commands = new Dictionary<IEnumerable<string>, (string description, CommandInfo.CommandCallback handler)>
         {
-            { SplitCommands(Config.config.Settings.Contact_Command), ("Displays contact menu", Command_Contact) }
+            { SplitCommands(Config.config.Settings.Contact_Commands), ("Displays contact menu", Command_Contact) }
         };
 
         foreach (var commandPair in commands)
@@ -52,7 +48,7 @@ public class dContact : BasePlugin
     public override void OnAllPluginsLoaded(bool hotReload)
     {
         _api = _pluginCapability.Get();
-        if (_api == null) Logger.LogWarning("MenuManager Core nie znaleziono...");
+        if (_api == null) Logger.LogWarning("MenuManager Core not found...");
     }
 
     [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY)]
@@ -60,29 +56,30 @@ public class dContact : BasePlugin
     {
         if (adminsList == null)
         {
-            Logger.LogError($"Lista kontaktów nie została załadowana");
+            Logger.LogError($"Contact list has not been loaded.");
             return;
         }
 
         if (_api == null)
         {
-            player.PrintToChat($"Błąd: Menu API niedostępne.");
+            player.PrintToChat($"Error: Menu API is unavailable.");
             return;
         }
 
-        var menu = _api.NewMenu($"<font color='{Config.config.Settings.TitleColor}'>{Config.config.Settings.Title}</font>");
+        var menu = _api.NewMenu($"<font color='{Config.config.Settings.Menu_Title_Color}'>{Config.config.Settings.Menu_Title}</font>");
 
         foreach (var contact in adminsList)
         {
-            menu.AddMenuOption($" <font color='yellow'>★</font> <font color='red'>{contact.rank}:</font> <font color='yellow'>{contact.name}</font>", (player, option) =>
+            menu.AddMenuOption($" <font color='yellow'>★</font> <font color='red'>{contact.Rank}:</font> <font color='yellow'>{contact.Name}</font>", (player, option) =>
             {
                 player.PrintToChat($" {ChatColors.Green}―――――――――――{ChatColors.DarkRed}◥◣◆◢◤{ChatColors.Green}―――――――――――");
-                player.PrintToChat($" {ChatColors.Lime}[ {ChatColors.DarkRed}★ {ChatColors.Lime}Kontakt do administratora: {ChatColors.LightRed}{contact.name} {ChatColors.DarkRed}★ {ChatColors.Lime}]");
-                player.PrintToChat($"➪ {ChatColors.Lime}Nick: {ChatColors.LightRed}{contact.name}");
-                player.PrintToChat($"➪ {ChatColors.Lime}Ranga: {ChatColors.LightRed}{contact.rank}");
-                player.PrintToChat($"➪ {ChatColors.Lime}Steam: {ChatColors.LightRed}{contact.steam}");
-                player.PrintToChat($"➪ {ChatColors.Lime}Forum: {ChatColors.LightRed}{contact.forum}");
-                player.PrintToChat($"➪ {ChatColors.Lime}Discord: {ChatColors.LightRed}{contact.discord}");
+                player.PrintToChat($" {ChatColors.Lime}[ {ChatColors.DarkRed}★ {ChatColors.Lime}Kontakt do administratora: {ChatColors.LightRed}{contact.Name} {ChatColors.DarkRed}★ {ChatColors.Lime}]");
+                player.PrintToChat($"➪ {ChatColors.Lime}Nick: {ChatColors.LightRed}{contact.Name}");
+                player.PrintToChat($"➪ {ChatColors.Lime}Ranga: {ChatColors.LightRed}{contact.Rank}");
+                foreach (var contactEntry in contact.Contacts)
+                {
+                    player.PrintToChat($"➪ {ChatColors.Lime}{contactEntry.Key}: {ChatColors.LightRed}{contactEntry.Value}");
+                }
                 player.PrintToChat($" {ChatColors.Green}―――――――――――{ChatColors.DarkRed}◥◣◆◢◤{ChatColors.Green}―――――――――――");
             });
         }
